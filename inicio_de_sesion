@@ -1,0 +1,267 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inicio de sesión</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb, #a1c4fd, #c2e9fb);
+      background-size: 500% 500%;
+      animation: moverFondo 12s ease infinite;
+      color: #333;
+      line-height: 1.7;
+      min-height: 100vh;
+
+      /* Centrar todo el contenido vertical y horizontalmente */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    @keyframes moverFondo {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Barra de navegación */
+    nav {
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: flex-start;
+      gap: 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      align-items: center;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #d695d8;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #fff;
+      background-color: #ffaca5;
+      padding: 0.5rem 1.2rem;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(255, 111, 97, 0.3);
+    }
+
+    /* Contenedor principal centrado */
+    .main-container {
+      background: #f0d2d2;
+      border-radius: 12px;
+      display: flex;
+      width: 900px;
+      max-width: 95%;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      margin-top: 80px;
+    }
+
+    /* Sección izquierda con logo centrado */
+    .left-section {
+      flex: 1;
+      background-color: #f0d2d2;
+      min-height: 500px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .left-section img {
+      width: 80%;
+      max-width: 300px;
+      height: auto;
+    }
+
+    .right-section {
+      flex: 1;
+      padding: 40px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .right-section h1 {
+      font-family: 'Brush Script MT', cursive;
+      font-size: 48px;
+      color: #eb95a9;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .input-box {
+      margin-bottom: 15px;
+    }
+
+    .input-box input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #bb404034;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 12px;
+      background-color: #f3a6d0;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-top: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .login-button:hover {
+      background-color: #e2d6e2;
+    }
+
+    .divider {
+      text-align: center;
+      margin: 20px 0;
+      color: #aaa;
+    }
+
+    /* BOTÓN DE GOOGLE centrado y estilizado */
+    .google-login {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px 15px;
+      background-color: white;
+      width: fit-content;
+      margin: 0 auto;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-weight: 600;
+    }
+
+    .google-login:hover {
+      background-color: #f5f5f5;
+    }
+
+    .google-login img {
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+    }
+
+    .forgot {
+      text-align: center;
+      font-size: 14px;
+      color: #00376b;
+      margin-top: 15px;
+    }
+
+    .register {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 25px;
+    }
+
+    .register a {
+      color: #ca8bc2;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+        height: auto;
+      }
+
+      .left-section {
+        height: 250px;
+      }
+
+      nav {
+        justify-content: center;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+<a href="/Sensebagpack/vistas/index.jsp">Inicio</a>
+    
+  </nav>
+
+  <div class="main-container">
+    <div class="left-section">
+  <img src="/Sensebagpack/imagenes/logo-removebg-preview.png" alt="Logo del sistema" />
+
+    </div>
+
+    <div class="right-section">
+      <h1>Sense Bag Pack</h1>
+      
+      
+<form action="/Sensebagpack/Loguearse" method="post">
+
+  <div class="input-box">
+    <input type="text" name="usuario" placeholder="Usuario" required />
+  </div>
+
+  <div class="input-box">
+    <input type="password" name="password" placeholder="Contraseña" required />
+  </div>
+
+  <div class="input-box">
+    <input type="text" name="dni" placeholder="DNI" required />
+  </div>
+
+  <button type="submit" class="login-button">Iniciar sesión</button>
+
+</form>
+
+      <div class="divider">o</div>
+
+      <div class="google-login">
+        <img 
+          src="https://cdn-icons-png.flaticon.com/512/281/281764.png" 
+          alt="Google" 
+        />
+        Iniciar sesión con Google
+      </div>
+
+      <div class="forgot">
+      <a href="/Sensebagpack/vistas/olvidocontrasena.jsp ">¿Olvidaste tu contraseña?</a>
+      </div>
+
+        <div class="register">
+     ¿No tienes una cuenta?
+        <a href="/Sensebagpack/vistas/registro.jsp ">Registrarse</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
