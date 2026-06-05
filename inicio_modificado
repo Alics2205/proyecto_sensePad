@@ -1,0 +1,215 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SenseBagPack</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Potta+One&family=Pacifico&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Poppins",sans-serif;
+}
+
+body{
+    background:#f7f4f1;
+    color:#1f2937;
+    line-height:1.6;
+}
+
+/* HEADER */
+header{
+    background:#1e3048;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:1rem 3rem;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+.logo-container{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo-container img{
+    height:60px;
+    width:auto;
+}
+
+.logo-text{
+    font-size:1.8rem;
+    font-weight:700;
+    color:white;
+    letter-spacing:.5px;
+}
+
+/* MENU */
+.menu-container{
+    position:relative;
+}
+
+.menu-btn{
+    color:white;
+    font-size:28px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.menu-btn:hover{
+    transform:scale(1.08);
+}
+
+.menu{
+    display:none;
+    position:absolute;
+    right:0;
+    top:50px;
+    width:220px;
+    background:white;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+.menu a{
+    display:block;
+    padding:14px;
+    text-decoration:none;
+    color:#374151;
+    font-weight:500;
+    transition:.2s;
+}
+
+.menu a:hover{
+    background:#f4f4f4;
+    color:#e07a5f;
+}
+
+/* CONTENIDO */
+section{
+    max-width:1200px;
+    margin:50px auto;
+    background:white;
+    padding:60px;
+    border-radius:20px;
+    border:1px solid #e7e0d8;
+    box-shadow:0 3px 10px rgba(0,0,0,.04);
+}
+
+h2{
+    font-size:2rem;
+    color:#1f2937;
+    margin-bottom:20px;
+}
+
+p{
+    font-size:1rem;
+    color:#6b7280;
+    max-width:850px;
+}
+
+/* BOTON */
+.btn{
+    display:inline-block;
+    margin-top:25px;
+    background:#e07a5f;
+    color:white;
+    text-decoration:none;
+    padding:12px 25px;
+    border-radius:10px;
+    font-weight:600;
+    transition:.2s;
+}
+
+.btn:hover{
+    background:#cf6b51;
+    transform:translateY(-2px);
+}
+
+/* TARJETAS */
+.card{
+    background:white;
+    border:1px solid #ebe5df;
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+
+/* FOOTER */
+footer{
+    margin-top:60px;
+    background:#1e3048;
+    color:white;
+    text-align:center;
+    padding:20px;
+    font-size:.95rem;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo-container">
+    <span class="logo-text">SenseBagPack</span>
+  
+    <img src="/Sensebagpack/imagenes/loguito.png" alt="Logo del sistema" />
+  
+</div>
+  <div class="menu-container">
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+
+    <div id="menu" class="menu">
+      <a href="/Sensebagpack/vistas/usuario.jsp">Acceder</a>
+      <a href="/Sensebagpack/vistas/elegirnos.jsp">¿Por qué elegirnos?</a>
+      <a href="/Sensebagpack/vistas/contacto.jsp">Contacto</a>
+       <a href="/Sensebagpack/vistas/contacto.jsp">Objetivo</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <h2>Bienvenido a SenseBagPack</h2>
+  <p>
+    Un proyecto innovador que busca mejorar la movilidad y seguridad de las personas no videntes.  
+    Combinamos tecnología, empatía y diseño inteligente en una mochila que detecta obstáculos y mantiene a las familias conectadas.
+  </p>
+  <a href="#" class="btn">Conocer más</a>
+</section>
+
+
+
+
+<footer>
+  © 2025 SenseBagPack — Innovación con propósito.
+</footer>
+
+<script>
+function toggleMenu() {
+  const menu = document.getElementById("menu");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+
+window.onclick = function(event) {
+  if (!event.target.matches('.menu-btn')) {
+    const menu = document.getElementById("menu");
+    if (menu.style.display === "block") {
+      menu.style.display = "none";
+    }
+  }
+}
+
+</script>
+
+</body>
+</html>
