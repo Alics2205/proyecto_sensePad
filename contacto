@@ -1,0 +1,200 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Contacto - SenseBagPack</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- ICONOS (WhatsApp) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* FONDO */
+body {
+  height: 100vh;
+  background: linear-gradient(135deg, #38ef7d, #ffffff, #a8ff78);
+  background-size: 400% 400%;
+  animation: fondoAnimado 10s ease infinite;
+}
+
+@keyframes fondoAnimado {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* HEADER */
+header {
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(10px);
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* MENÚ */
+.menu-btn {
+  font-size: 28px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.menu-btn:hover {
+  color: #25D366;
+  transform: scale(1.2);
+}
+
+.menu-container {
+  position: relative;
+}
+
+.menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background: white;
+  border-radius: 10px;
+  width: 200px;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
+}
+
+.menu a {
+  display: block;
+  padding: 12px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.menu a:hover {
+  background-color: #25D366;
+  color: white;
+  transform: scale(1.05);
+}
+
+/* CONTENIDO */
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: #2e7d32;
+  margin-bottom: 15px;
+}
+
+p {
+  max-width: 600px;
+  margin-bottom: 25px;
+}
+
+/* BOTONES */
+.btn {
+  display: inline-block;
+  margin: 10px;
+  padding: 12px 25px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+/* ICONO */
+.btn i {
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+/* WhatsApp */
+.btn-wsp {
+  background-color: #25D366;
+  color: white;
+}
+
+.btn-wsp:hover {
+  background-color: white;
+  color: #25D366;
+  transform: scale(1.08);
+  box-shadow: 0 0 15px rgba(37, 211, 102, 0.6);
+}
+
+/* Inicio */
+.btn-inicio {
+  background-color: #333;
+  color: white;
+}
+
+.btn-inicio:hover {
+  background-color: white;
+  color: #333;
+  transform: scale(1.08);
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>SenseBagPack</h2>
+
+  <div class="menu-container">
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+
+    <div id="menu" class="menu">
+      <a href="/Sensebagpack/vistas/index.jsp">Inicio</a>
+      <a href="/Sensebagpack/vistas/usuario.jsp">Acceder</a>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <h1>Escribinos ahora</h1>
+
+  <p>
+    En SenseBagPack llevamos más de un año en proceso de construcción, diseño y mejora continua.  
+    Nuestro objetivo es brindar seguridad, innovación y tranquilidad a través de la tecnología.
+  </p>
+
+  <a href="https://wa.me/541130091513" target="_blank" class="btn btn-wsp">
+    <i class="fa-brands fa-whatsapp"></i> Hablanos por WhatsApp
+  </a>
+
+
+</div>
+
+<script>
+function toggleMenu() {
+  const menu = document.getElementById("menu");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+
+window.onclick = function(event) {
+  if (!event.target.matches('.menu-btn')) {
+    const menu = document.getElementById("menu");
+    if (menu.style.display === "block") {
+      menu.style.display = "none";
+    }
+  }
+}
+</script>
+
+</body>
+</html>
