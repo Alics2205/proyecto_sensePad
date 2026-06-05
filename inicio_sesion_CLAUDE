@@ -1,1 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inicio de sesión — SenseBagPack</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --navy:      #1e3048;
+      --navy-mid:  #253d58;
+      --coral:     #c4715a;
+      --coral-hi:  #d4856e;
+      --coral-dim: rgba(196,113,90,.12);
+      --cream:     #faf5f0;
+      --sand:      #f0e8e0;
+      --white:     #ffffff;
+      --border:    #e4dbd2;
+      --text:      #1a1f2e;
+      --text-mid:  #4a4540;
+      --muted:     #9a8c84;
+    }
+
+    body {
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-family: 'Manrope', sans-serif;
+    }
+
+    /* subtle grid texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(196,113,90,.06) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes moverFondo {
+      0%  { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100%{ background-position: 0% 50%; }
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      width: 100%;
+      background: var(--navy);
+      color: white;
+      padding: 0 36px;
+      height: 58px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 100;
+      box-shadow: 0 2px 20px rgba(0,0,0,.15);
+    }
+
+    nav::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--coral), transparent);
+      opacity: .5;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: rgba(255,255,255,.6);
+      font-size: .85rem;
+      font-weight: 600;
+      letter-spacing: .5px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all .22s;
+    }
+
+    nav a::before {
+      content: '←';
+      font-size: .8rem;
+      opacity: .7;
+    }
+
+    nav a:hover {
+      color: var(--white);
+      background: rgba(255,255,255,.1);
+      padding: 6px 14px;
+    }
+
+    /* ─── MAIN CONTAINER ─── */
+    .main-container {
+      background: var(--white);
+      border-radius: 24px;
+      width: 950px;
+      max-width: 95%;
+      box-shadow: 0 20px 60px rgba(0,0,0,.1), 0 2px 8px rgba(0,0,0,.06);
+      overflow: hidden;
+      margin-top: 90px;
+      display: flex;
+      border: 1px solid var(--border);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── LEFT SECTION ─── */
+    .left-section {
+      width: 42%;
+      flex-shrink: 0;
+      background: var(--navy);
+      border-right: 1px solid rgba(255,255,255,.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 50px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* decorative blobs */
+    .left-section::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(196,113,90,.18) 0%, transparent 70%);
+    }
+
+    .left-section::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -60px;
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(196,113,90,.12) 0%, transparent 70%);
+    }
+
+    .left-section img {
+      width: 80%;
+      max-width: 260px;
+      height: auto;
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 8px 24px rgba(0,0,0,.3));
+    }
+
+    /* brand label under logo */
+    .left-brand {
+      position: absolute;
+      bottom: 32px;
+      left: 0; right: 0;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .left-brand p {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.28);
+    }
+
+    /* ─── RIGHT SECTION ─── */
+    .right-section {
+      flex: 1;
+      padding: 50px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* eyebrow */
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--coral-dim);
+      color: var(--coral);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      width: fit-content;
+      border: 1px solid rgba(196,113,90,.2);
+    }
+
+    .eyebrow-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--coral);
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+    .right-section h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.2rem;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.15;
+      margin-bottom: 28px;
+      letter-spacing: -.2px;
+    }
+
+    .right-section h1 em {
+      font-style: italic;
+      color: var(--coral);
+    }
+
+    /* ─── INPUTS ─── */
+    .input-box {
+      margin-bottom: 13px;
+      position: relative;
+    }
+
+    .input-box input {
+      width: 100%;
+      padding: 13px 16px 13px 42px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: .9rem;
+      font-family: 'Manrope', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      transition: all .22s;
+      outline: none;
+    }
+
+    .input-box input::placeholder { color: var(--muted); }
+
+    .input-box input:focus {
+      border-color: var(--coral);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(196,113,90,.1);
+    }
+
+    /* icon inside input */
+    .input-box .icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: .95rem;
+      opacity: .45;
+      pointer-events: none;
+    }
+
+    /* ─── LOGIN BUTTON ─── */
+    .login-button {
+      width: 100%;
+      padding: 14px;
+      background: var(--coral);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: .95rem;
+      font-weight: 700;
+      font-family: 'Manrope', sans-serif;
+      cursor: pointer;
+      transition: all .22s;
+      box-shadow: 0 6px 18px rgba(196,113,90,.28);
+      letter-spacing: .2px;
+      margin-top: 4px;
+    }
+
+    .login-button:hover {
+      background: #b5624c;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(196,113,90,.36);
+    }
+
+    /* ─── DIVIDER ─── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+      color: var(--muted);
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ─── GOOGLE BUTTON ─── */
+    .google-login {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 18px;
+      background: var(--white);
+      width: 100%;
+      cursor: pointer;
+      transition: all .22s;
+      font-weight: 600;
+      font-size: .88rem;
+      font-family: 'Manrope', sans-serif;
+      color: var(--text-mid);
+    }
+
+    .google-login:hover {
+      background: var(--cream);
+      border-color: #c8bfb8;
+      transform: translateY(-1px);
+    }
+
+    .google-login img {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ─── BOTTOM LINKS ─── */
+    .forgot {
+      text-align: center;
+      font-size: .82rem;
+      margin-top: 16px;
+    }
+
+    .forgot a {
+      color: var(--coral);
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity .2s;
+    }
+
+    .forgot a:hover { opacity: .75; }
+
+    .register {
+      text-align: center;
+      font-size: .82rem;
+      margin-top: 12px;
+      color: var(--muted);
+    }
+
+    .register a {
+      color: var(--navy);
+      text-decoration: none;
+      font-weight: 700;
+      border-bottom: 1.5px solid rgba(30,48,72,.2);
+      transition: all .2s;
+    }
+
+    .register a:hover {
+      color: var(--coral);
+      border-color: var(--coral);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .main-container { flex-direction: column; height: auto; }
+      .left-section { width: 100%; height: 200px; }
+      nav { justify-content: center; gap: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/Sensebagpack/vistas/index.jsp">Inicio</a>
+  </nav>
+
+  <div class="main-container">
+
+    <div class="left-section">
+      <img src="/Sensebagpack/imagenes/logo-removebg-preview.png" alt="Logo del sistema" />
+      <div class="left-brand"><p>Movilidad inteligente</p></div>
+    </div>
+
+    <div class="right-section">
+
+      <div class="eyebrow"><span class="eyebrow-dot"></span> Bienvenido de vuelta</div>
+
+      <h1>Sense Bag <em>Pack</em></h1>
+
+      <form action="/Sensebagpack/Loguearse" method="post">
+
+        <div class="input-box">
+          <span class="icon">👤</span>
+          <input type="text" name="usuario" placeholder="Usuario" required />
+        </div>
+
+        <div class="input-box">
+          <span class="icon">🔒</span>
+          <input type="password" name="password" placeholder="Contraseña" required />
+        </div>
+
+        <div class="input-box">
+          <span class="icon">🪪</span>
+          <input type="text" name="dni" placeholder="DNI" required />
+        </div>
+
+        <button type="submit" class="login-button">Iniciar sesión</button>
+
+      </form>
+
+      <div class="divider">o</div>
+
+      <div class="google-login">
+        <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" alt="Google" />
+        Iniciar sesión con Google
+      </div>
+
+      <div class="forgot">
+        <a href="/Sensebagpack/vistas/olvidocontrasena.jsp">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <div class="register">
+        ¿No tienes una cuenta? <a href="/Sensebagpack/vistas/registro.jsp">Registrarse</a>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
