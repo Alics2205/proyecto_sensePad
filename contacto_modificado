@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Contacto - SensePad</title>
+ 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- ICONOS (WhatsApp) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Poppins",sans-serif;
+}
+
+:root{
+  --bg:#faf7f4;
+  --sidebar:#1c2b35;
+  --accent:#e76f51;
+  --accent-light:#fff1ed;
+  --text:#1f2937;
+  --muted:#7b8794;
+  --border:#e7dfd8;
+  --white:#ffffff;
+}
+
+body{
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* HEADER */
+header{
+  background:var(--sidebar);
+  padding:18px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+
+header h2{
+  color:white;
+  font-size:22px;
+  font-weight:700;
+}
+
+/* MENÚ */
+.menu-container{
+  position:relative;
+}
+
+.menu-btn{
+  color:white;
+  font-size:26px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.menu-btn:hover{
+  transform:scale(1.1);
+}
+
+.menu{
+  display:none;
+  position:absolute;
+  right:0;
+  top:45px;
+  width:220px;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.menu a{
+  display:block;
+  padding:14px;
+  text-decoration:none;
+  color:var(--text);
+  font-size:14px;
+  font-weight:500;
+  transition:.2s;
+}
+
+.menu a:hover{
+  background:var(--accent-light);
+  color:var(--accent);
+}
+
+/* CONTENEDOR */
+.container{
+  max-width:850px;
+  margin:60px auto;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:50px;
+  text-align:center;
+  box-shadow:0 5px 15px rgba(0,0,0,.04);
+}
+
+h1{
+  font-size:32px;
+  margin-bottom:15px;
+  color:var(--text);
+}
+
+p{
+  color:var(--muted);
+  line-height:1.8;
+  margin-bottom:30px;
+}
+
+/* BOTONES */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+  padding:12px 22px;
+  border-radius:10px;
+  font-weight:600;
+  transition:.2s;
+}
+
+.btn i{
+  font-size:18px;
+}
+
+/* WHATSAPP */
+.btn-wsp{
+  background:#25D366;
+  color:white;
+}
+
+.btn-wsp:hover{
+  transform:translateY(-2px);
+}
+
+/* INICIO */
+.btn-inicio{
+  background:var(--accent);
+  color:white;
+}
+
+.btn-inicio:hover{
+  opacity:.9;
+  transform:translateY(-2px);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>SenseBagPack</h2>
+
+  <div class="menu-container">
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+
+    <div id="menu" class="menu">
+      <a href="/Sensebagpack/vistas/index.jsp">Inicio</a>
+      <a href="/Sensebagpack/vistas/usuario.jsp">Acceder</a>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <h1>Escribinos ahora</h1>
+
+  <p>
+    En SensePad llevamos más de un año desarrollando, diseñando y perfeccionando una solución pensada para mejorar la autonomía y seguridad de las personas con discapacidad visual. Nuestro compromiso es combinar innovación, accesibilidad y tecnología para brindar mayor tranquilidad tanto a los usuarios como a sus familias.
+  </p>
+
+  <a href="https://wa.me/541130091513" target="_blank" class="btn btn-wsp">
+    <i class="fa-brands fa-whatsapp"></i> Hablanos por WhatsApp
+  </a>
+
+
+</div>
+
+<script>
+function toggleMenu() {
+  const menu = document.getElementById("menu");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+
+window.onclick = function(event) {
+  if (!event.target.matches('.menu-btn')) {
+    const menu = document.getElementById("menu");
+    if (menu.style.display === "block") {
+      menu.style.display = "none";
+    }
+  }
+}
+</script>
+
+</body>
+</html>
