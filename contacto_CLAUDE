@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Contacto — SenseBagPack</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+
+:root {
+  --bg:        #faf5f0;
+  --navy:      #1e3048;
+  --navy-mid:  #253d58;
+  --coral:     #c4715a;
+  --coral-hi:  #d4856e;
+  --coral-dim: rgba(196,113,90,.11);
+  --cream:     #faf5f0;
+  --sand:      #f0e8e0;
+  --white:     #ffffff;
+  --border:    #e4dbd2;
+  --text:      #1a1f2e;
+  --text-mid:  #4a4540;
+  --muted:     #9a8c84;
+  --green:     #25D366;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Manrope', sans-serif;
+}
+
+/* subtle dot texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(196,113,90,.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── HEADER ─── */
+header {
+  background: var(--navy);
+  padding: 0 36px;
+  height: 66px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 20px rgba(0,0,0,.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--coral), transparent);
+  opacity: .5;
+}
+
+header h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.35rem;
+  font-weight: 400;
+  color: var(--white);
+  letter-spacing: .2px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+header h2::before {
+  content: '';
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--coral);
+  display: inline-block;
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+/* ─── MENU ─── */
+.menu-container { position: relative; }
+
+.menu-btn {
+  width: 38px; height: 38px;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  border-radius: 9px;
+  transition: background .2s;
+  padding: 7px;
+}
+
+.menu-btn:hover { background: rgba(255,255,255,.1); }
+
+.menu-btn .bar {
+  width: 20px; height: 2px;
+  background: rgba(255,255,255,.8);
+  border-radius: 2px;
+  transition: all .22s;
+}
+
+.menu-btn .bar:nth-child(2) { width: 14px; align-self: flex-end; }
+
+.menu {
+  display: none;
+  position: absolute;
+  right: 0; top: calc(100% + 10px);
+  width: 210px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 16px 48px rgba(0,0,0,.13);
+}
+
+.menu::before {
+  content: '';
+  position: absolute;
+  top: -6px; right: 14px;
+  width: 12px; height: 12px;
+  background: var(--white);
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  transform: rotate(45deg);
+}
+
+.menu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 18px;
+  text-decoration: none;
+  color: var(--text-mid);
+  font-size: .88rem;
+  font-weight: 600;
+  transition: all .2s;
+  border-bottom: 1px solid #f5f0eb;
+}
+
+.menu a:last-child { border-bottom: none; }
+
+.menu a .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  flex-shrink: 0;
+  transition: background .2s;
+}
+
+.menu a:hover { background: #fdf4ef; color: var(--coral); padding-left: 22px; }
+.menu a:hover .dot { background: var(--coral); }
+
+/* ─── CONTAINER ─── */
+.container {
+  max-width: 780px;
+  margin: 70px auto 60px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: 70px 60px;
+  text-align: center;
+  box-shadow: 0 16px 50px rgba(0,0,0,.07);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* decorative blobs */
+.container::before {
+  content: '';
+  position: absolute;
+  top: -90px; right: -90px;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(196,113,90,.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.container::after {
+  content: '';
+  position: absolute;
+  bottom: -70px; left: -70px;
+  width: 250px; height: 250px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(30,48,72,.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* eyebrow */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--coral-dim);
+  color: var(--coral);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 5px 13px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(196,113,90,.2);
+}
+
+.eyebrow-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--coral);
+  animation: blink 2s ease-in-out infinite;
+}
+
+h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.6rem;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 20px;
+  line-height: 1.2;
+  letter-spacing: -.3px;
+  position: relative;
+  z-index: 1;
+}
+
+h1 em {
+  font-style: italic;
+  color: var(--coral);
+}
+
+p {
+  color: var(--muted);
+  line-height: 1.85;
+  margin-bottom: 36px;
+  font-size: 1rem;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  z-index: 1;
+  font-weight: 400;
+}
+
+/* highlight strip inside p */
+.highlight {
+  display: inline;
+  background: linear-gradient(180deg, transparent 60%, rgba(196,113,90,.18) 60%);
+  font-weight: 600;
+  color: var(--text-mid);
+}
+
+/* ─── BUTTONS ─── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: .92rem;
+  font-family: 'Manrope', sans-serif;
+  transition: all .22s;
+  position: relative;
+  z-index: 1;
+  letter-spacing: .2px;
+}
+
+.btn i { font-size: 1.1rem; }
+
+.btn-wsp {
+  background: var(--green);
+  color: white;
+  box-shadow: 0 6px 20px rgba(37,211,102,.28);
+}
+
+.btn-wsp:hover {
+  background: #1ebe5a;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(37,211,102,.36);
+}
+
+.btn-inicio {
+  background: var(--coral);
+  color: white;
+  box-shadow: 0 6px 18px rgba(196,113,90,.28);
+}
+
+.btn-inicio:hover {
+  background: #b5624c;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 26px rgba(196,113,90,.36);
+}
+
+/* info chips below button */
+.info-chips {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 36px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+  font-size: .78rem;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 20px;
+}
+
+.chip i { font-size: .85rem; color: var(--coral); }
+</style>
+</head>
+<body>
+
+<header>
+  <h2>SenseBagPack</h2>
+  <div class="menu-container">
+    <div class="menu-btn" onclick="toggleMenu()">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <div id="menu" class="menu">
+      <a href="/Sensebagpack/vistas/index.jsp"><span class="dot"></span>Inicio</a>
+      <a href="/Sensebagpack/vistas/usuario.jsp"><span class="dot"></span>Acceder</a>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="eyebrow"><span class="eyebrow-dot"></span> Estamos para ayudarte</div>
+
+  <h1>Escribinos <em>ahora</em></h1>
+
+  <p>
+    En SensePad llevamos más de un año desarrollando, diseñando y perfeccionando una solución pensada para mejorar la <span class="highlight">autonomía y seguridad</span> de las personas con discapacidad visual. Nuestro compromiso es combinar innovación, accesibilidad y tecnología para brindar mayor tranquilidad tanto a los usuarios como a sus familias.
+  </p>
+
+  <a href="https://wa.me/541130091513" target="_blank" class="btn btn-wsp">
+    <i class="fa-brands fa-whatsapp"></i> Hablanos por WhatsApp
+  </a>
+
+  <div class="info-chips">
+    <div class="chip"><i class="fa-regular fa-clock"></i> Respondemos en minutos</div>
+    <div class="chip"><i class="fa-solid fa-shield-halved"></i> Información confidencial</div>
+    <div class="chip"><i class="fa-solid fa-heart"></i> Atención personalizada</div>
+  </div>
+
+</div>
+
+<script>
+function toggleMenu() {
+  const menu = document.getElementById("menu");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+window.onclick = function(event) {
+  if (!event.target.closest('.menu-container')) {
+    const menu = document.getElementById("menu");
+    if (menu.style.display === "block") menu.style.display = "none";
+  }
+}
+</script>
+</body>
+</html>
