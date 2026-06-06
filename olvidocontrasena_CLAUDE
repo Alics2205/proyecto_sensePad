@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Recuperar contraseña — SenseBagPack</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #faf5f0;
+  --navy:      #1e3048;
+  --coral:     #c4715a;
+  --coral-dim: rgba(196,113,90,.11);
+  --white:     #ffffff;
+  --border:    #e4dbd2;
+  --text:      #1a1f2e;
+  --text-mid:  #4a4540;
+  --muted:     #9a8c84;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-family: 'Manrope', sans-serif;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: radial-gradient(circle, rgba(196,113,90,.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── NAV ─── */
+nav {
+  width: 100%;
+  height: 62px;
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  padding: 0 36px;
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 100;
+  box-shadow: 0 2px 20px rgba(0,0,0,.15);
+}
+
+nav::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--coral), transparent);
+  opacity: .5;
+}
+
+nav a {
+  text-decoration: none;
+  color: rgba(255,255,255,.6);
+  font-size: .85rem;
+  font-weight: 600;
+  letter-spacing: .4px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all .22s;
+}
+
+nav a:hover {
+  color: var(--white);
+  background: rgba(255,255,255,.1);
+  padding: 6px 14px;
+}
+
+/* nav back arrow SVG */
+.nav-arrow {
+  width: 14px; height: 14px;
+  stroke: currentColor; fill: none;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* ─── CARD ─── */
+.main-container {
+  background: var(--white);
+  width: 420px;
+  max-width: 95%;
+  margin-top: 100px;
+  padding: 50px 44px;
+  border-radius: 26px;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 60px rgba(0,0,0,.09), 0 2px 8px rgba(0,0,0,.05);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  text-align: center;
+}
+
+.main-container::before {
+  content: '';
+  position: absolute;
+  top: -70px; right: -70px;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(196,113,90,.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.main-container::after {
+  content: '';
+  position: absolute;
+  bottom: -50px; left: -50px;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(30,48,72,.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* icon circle — uses SVG now */
+.icon-wrap {
+  width: 62px; height: 62px;
+  border-radius: 18px;
+  background: var(--coral-dim);
+  border: 1px solid rgba(196,113,90,.22);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+  position: relative; z-index: 1;
+}
+
+.icon-wrap svg {
+  width: 28px; height: 28px;
+  stroke: var(--coral);
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--coral-dim);
+  color: var(--coral);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(196,113,90,.2);
+  position: relative; z-index: 1;
+}
+
+.main-container h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.9rem;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.2;
+  letter-spacing: -.2px;
+  position: relative; z-index: 1;
+}
+
+.main-container h1 em { font-style: italic; color: var(--coral); }
+
+.subtitle {
+  font-size: .85rem;
+  color: var(--muted);
+  margin-bottom: 30px;
+  line-height: 1.6;
+  position: relative; z-index: 1;
+}
+
+/* ─── INPUT ─── */
+.input-box {
+  margin-bottom: 16px;
+  position: relative; z-index: 1;
+}
+
+/* SVG icon inside input */
+.input-box .field-icon {
+  position: absolute;
+  left: 13px; top: 50%;
+  transform: translateY(-50%);
+  width: 17px; height: 17px;
+  stroke: var(--muted);
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+  transition: stroke .22s;
+}
+
+.input-box input {
+  width: 100%;
+  padding: 13px 16px 13px 40px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  font-size: .9rem;
+  font-family: 'Manrope', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
+  transition: all .22s;
+}
+
+.input-box input::placeholder { color: var(--muted); }
+
+.input-box input:focus {
+  border-color: var(--coral);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(196,113,90,.1);
+}
+
+.input-box input:focus + .field-icon,
+.input-box:focus-within .field-icon { stroke: var(--coral); }
+
+/* ─── BUTTON ─── */
+.submit-button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: var(--coral);
+  color: white;
+  font-size: .93rem;
+  font-weight: 700;
+  font-family: 'Manrope', sans-serif;
+  cursor: pointer;
+  transition: all .22s;
+  box-shadow: 0 6px 18px rgba(196,113,90,.28);
+  letter-spacing: .2px;
+  position: relative; z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+.submit-button svg {
+  width: 17px; height: 17px;
+  stroke: white; fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round; stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.submit-button:hover {
+  background: #b5624c;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(196,113,90,.36);
+}
+
+.error-message {
+  text-align: center;
+  margin-top: 14px;
+  color: #d9534f;
+  font-size: .82rem;
+  font-weight: 600;
+  position: relative; z-index: 1;
+}
+
+@media (max-width: 768px) {
+  nav { justify-content: center; }
+  .main-container { width: 90%; padding: 36px 28px; }
+}
+</style>
+</head>
+<body>
+
+  <nav>
+    <a href="/Sensebagpack/vistas/index.jsp">
+      <!-- arrow left -->
+      <svg class="nav-arrow" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Inicio
+    </a>
+  </nav>
+
+  <div class="main-container">
+
+    <!-- key / lock icon (outline, like the image style) -->
+    <div class="icon-wrap">
+      <svg viewBox="0 0 24 24">
+        <rect x="5" y="11" width="14" height="10" rx="2"/>
+        <path d="M8 11V7a4 4 0 018 0v4"/>
+      </svg>
+    </div>
+
+    <div class="eyebrow">Seguridad de cuenta</div>
+
+    <h1>Recuperar <em>contraseña</em></h1>
+    <p class="subtitle">Ingresá tu DNI y verificaremos tu identidad para ayudarte a recuperar el acceso.</p>
+
+    <form action="/Sensebagpack/Leer" method="post">
+      <div class="input-box">
+        <input type="text" name="dni" placeholder="Ingresá tu DNI" required />
+        <!-- ID card / person icon -->
+        <svg class="field-icon" viewBox="0 0 24 24">
+          <rect x="2" y="5" width="20" height="14" rx="2"/>
+          <circle cx="8" cy="12" r="2"/>
+          <path d="M12 10h5M12 14h3"/>
+        </svg>
+      </div>
+
+      <button type="submit" class="submit-button">
+        <!-- checkmark / verify icon -->
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+        Verificar DNI
+      </button>
+    </form>
+
+  </div>
+
+</body>
+</html>
