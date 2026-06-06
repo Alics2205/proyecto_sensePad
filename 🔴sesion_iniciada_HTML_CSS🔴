@@ -1,3 +1,24 @@
+/* ─────────────────────────────────────────────
+  Lo que NO tiene todavía
+
+❌ Java (Servlets)
+
+❌ JSP dinámico
+
+❌ Base de datos MySQL
+
+❌ Leaflet real
+
+❌ Coordenadas GPS reales
+
+❌ Login funcional
+
+❌ Sesiones
+
+❌ Consultas SQL
+
+❌ Backend
+───────────────────────────────────────────── */
 <!DOCTYPE html>
 <html lang="es">
 <head>
