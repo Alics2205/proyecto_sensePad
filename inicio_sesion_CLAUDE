@@ -34,7 +34,6 @@
       font-family: 'Manrope', sans-serif;
     }
 
-    /* subtle grid texture */
     body::before {
       content: '';
       position: fixed;
@@ -84,23 +83,28 @@
       letter-spacing: .5px;
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 8px;
       padding: 6px 12px;
       border-radius: 8px;
       cursor: pointer;
       transition: all .22s;
     }
 
-    nav a::before {
-      content: '←';
-      font-size: .8rem;
-      opacity: .7;
-    }
-
     nav a:hover {
       color: var(--white);
       background: rgba(255,255,255,.1);
       padding: 6px 14px;
+    }
+
+    /* SVG icon shared style */
+    .svg-icon {
+      width: 16px; height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
     }
 
     /* ─── MAIN CONTAINER ─── */
@@ -132,7 +136,6 @@
       overflow: hidden;
     }
 
-    /* decorative blobs */
     .left-section::before {
       content: '';
       position: absolute;
@@ -160,7 +163,6 @@
       filter: drop-shadow(0 8px 24px rgba(0,0,0,.3));
     }
 
-    /* brand label under logo */
     .left-brand {
       position: absolute;
       bottom: 32px;
@@ -186,7 +188,6 @@
       justify-content: center;
     }
 
-    /* eyebrow */
     .eyebrow {
       display: inline-flex;
       align-items: center;
@@ -236,7 +237,7 @@
 
     .input-box input {
       width: 100%;
-      padding: 13px 16px 13px 42px;
+      padding: 13px 16px 13px 44px;
       border: 1.5px solid var(--border);
       border-radius: 12px;
       font-size: .9rem;
@@ -255,16 +256,23 @@
       box-shadow: 0 0 0 3px rgba(196,113,90,.1);
     }
 
-    /* icon inside input */
-    .input-box .icon {
+    /* SVG icon inside input */
+    .input-box .field-svg {
       position: absolute;
       left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: .95rem;
-      opacity: .45;
+      width: 17px; height: 17px;
+      stroke: var(--muted);
+      fill: none;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
       pointer-events: none;
+      transition: stroke .22s;
     }
+
+    .input-box:focus-within .field-svg { stroke: var(--coral); }
 
     /* ─── LOGIN BUTTON ─── */
     .login-button {
@@ -282,6 +290,17 @@
       box-shadow: 0 6px 18px rgba(196,113,90,.28);
       letter-spacing: .2px;
       margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+    }
+
+    .login-button svg {
+      width: 17px; height: 17px;
+      stroke: white; fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round; stroke-linejoin: round;
     }
 
     .login-button:hover {
@@ -386,7 +405,14 @@
 <body>
 
   <nav>
-    <a href="/Sensebagpack/vistas/index.jsp">Inicio</a>
+    <a href="/Sensebagpack/vistas/index.jsp">
+      <!-- house icon (like the one in row 3 of the image) -->
+      <svg class="svg-icon" viewBox="0 0 24 24">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z"/>
+        <path d="M9 21V12h6v9"/>
+      </svg>
+      Inicio
+    </a>
   </nav>
 
   <div class="main-container">
@@ -404,22 +430,43 @@
 
       <form action="/Sensebagpack/Loguearse" method="post">
 
+        <!-- usuario: person/user icon (row 1, col 4 of image) -->
         <div class="input-box">
-          <span class="icon">👤</span>
+          <svg class="field-svg" viewBox="0 0 24 24">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
           <input type="text" name="usuario" placeholder="Usuario" required />
         </div>
 
+        <!-- password: lock icon -->
         <div class="input-box">
-          <span class="icon">🔒</span>
+          <svg class="field-svg" viewBox="0 0 24 24">
+            <rect x="5" y="11" width="14" height="10" rx="2"/>
+            <path d="M8 11V7a4 4 0 018 0v4"/>
+          </svg>
           <input type="password" name="password" placeholder="Contraseña" required />
         </div>
 
+        <!-- DNI: document/ID card icon (row 4, col 3 of image) -->
         <div class="input-box">
-          <span class="icon">🪪</span>
+          <svg class="field-svg" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="16" rx="2"/>
+            <circle cx="9" cy="11" r="2"/>
+            <path d="M13 10h4M13 14h3M5 20v-1a4 4 0 014-4h.5"/>
+          </svg>
           <input type="text" name="dni" placeholder="DNI" required />
         </div>
 
-        <button type="submit" class="login-button">Iniciar sesión</button>
+        <!-- button with arrow/enter icon -->
+        <button type="submit" class="login-button">
+          <svg viewBox="0 0 24 24">
+            <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/>
+            <polyline points="10 17 15 12 10 7"/>
+            <line x1="15" y1="12" x2="3" y2="12"/>
+          </svg>
+          Iniciar sesión
+        </button>
 
       </form>
 
