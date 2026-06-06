@@ -1,1 +1,1407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SenseBagPack — Mapa en tiempo real</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet" />
 
+  <style>
+    /* ─────────────────────────────────────────
+       RESET
+    ───────────────────────────────────────── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    ul { list-style: none; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+    svg { display: block; }
+
+    /* ─────────────────────────────────────────
+       VARIABLES
+    ───────────────────────────────────────── */
+    :root {
+      --bg: #faf5f0;
+      --navy: #1e3048;
+      --coral: #c4715a;
+      --coral-dim: rgba(196, 113, 90, .11);
+      --white: #ffffff;
+      --border: #e4dbd2;
+      --text: #1a1f2e;
+      --muted: #9a8c84;
+      --green: #3a9e6f;
+      --green-dim: rgba(58, 158, 111, .13);
+      --amber: #e8920a;
+      --amber-dim: rgba(232, 146, 10, .12);
+      --blue: #3b6fcf;
+      --blue-dim: rgba(59, 111, 207, .11);
+      --sidebar-w: 228px;
+      --navbar-h: 60px;
+      --radius: 14px;
+      --shadow: 0 2px 16px rgba(30, 48, 72, .08);
+      --shadow-lg: 0 6px 32px rgba(30, 48, 72, .12);
+      --font-body: 'Manrope', sans-serif;
+      --font-display: 'DM Serif Display', serif;
+      --transition: 0.18s ease;
+    }
+
+    /* ─────────────────────────────────────────
+       BODY
+    ───────────────────────────────────────── */
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─────────────────────────────────────────
+       NAVBAR
+    ───────────────────────────────────────── */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--navbar-h);
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,.18);
+    }
+
+    .navbar__brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .navbar__logo-icon {
+      width: 32px; height: 32px;
+      background: var(--coral);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .navbar__logo-icon svg {
+      width: 18px; height: 18px;
+      fill: #fff;
+    }
+
+    .navbar__brand-name {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      color: #fff;
+      letter-spacing: 0.01em;
+    }
+
+    .navbar__actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .navbar__notif {
+      position: relative;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.08);
+      display: flex; align-items: center; justify-content: center;
+      transition: background var(--transition);
+    }
+    .navbar__notif:hover { background: rgba(255,255,255,.16); }
+    .navbar__notif svg { width: 20px; height: 20px; stroke: #fff; fill: none; }
+    .navbar__notif-badge {
+      position: absolute;
+      top: 4px; right: 4px;
+      width: 16px; height: 16px;
+      background: var(--coral);
+      border-radius: 50%;
+      border: 2px solid var(--navy);
+      font-size: 9px;
+      font-weight: 700;
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .navbar__user {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 4px 12px 4px 4px;
+      border-radius: 30px;
+      background: rgba(255,255,255,.08);
+      transition: background var(--transition);
+      cursor: pointer;
+    }
+    .navbar__user:hover { background: rgba(255,255,255,.14); }
+    .navbar__avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #c4715a 0%, #8a4f3a 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .navbar__username {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .navbar__chevron {
+      width: 14px; height: 14px;
+      stroke: rgba(255,255,255,.6);
+      fill: none;
+    }
+
+    /* User dropdown */
+    .navbar__dropdown-wrap {
+      position: relative;
+    }
+    .navbar__dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      min-width: 170px;
+      overflow: hidden;
+      z-index: 200;
+    }
+    .navbar__dropdown-wrap:hover .navbar__dropdown,
+    .navbar__dropdown-wrap:focus-within .navbar__dropdown {
+      display: block;
+    }
+    .navbar__dropdown li a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 18px;
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: background var(--transition);
+    }
+    .navbar__dropdown li a:hover { background: var(--bg); }
+    .navbar__dropdown li a svg {
+      width: 15px; height: 15px;
+      stroke: var(--muted);
+      fill: none;
+    }
+    .navbar__dropdown li:last-child a { color: var(--coral); }
+    .navbar__dropdown li:last-child a svg { stroke: var(--coral); }
+    .navbar__dropdown .dropdown-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0;
+    }
+
+    /* ─────────────────────────────────────────
+       SIDEBAR
+    ───────────────────────────────────────── */
+    .layout {
+      display: flex;
+      margin-top: var(--navbar-h);
+      min-height: calc(100vh - var(--navbar-h));
+    }
+
+    .sidebar {
+      position: fixed;
+      top: var(--navbar-h);
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-w);
+      background: var(--white);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px 0;
+      overflow-y: auto;
+      z-index: 90;
+    }
+
+    .sidebar__nav { flex: 1; }
+
+    .sidebar__item {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 11px 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--muted);
+      border-radius: 0;
+      cursor: pointer;
+      transition: color var(--transition), background var(--transition);
+      position: relative;
+    }
+    .sidebar__item svg {
+      width: 18px; height: 18px;
+      stroke: currentColor;
+      fill: none;
+      flex-shrink: 0;
+    }
+    .sidebar__item:hover {
+      color: var(--text);
+      background: var(--bg);
+    }
+    .sidebar__item--active {
+      color: var(--coral);
+      background: var(--coral-dim);
+      font-weight: 600;
+    }
+    .sidebar__item--active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 50%;
+      transform: translateY(-50%);
+      width: 3px; height: 60%;
+      background: var(--coral);
+      border-radius: 0 3px 3px 0;
+    }
+    .sidebar__item--active svg { stroke: var(--coral); }
+
+    .sidebar__divider {
+      height: 1px;
+      background: var(--border);
+      margin: 10px 16px;
+    }
+
+    /* Device status card inside sidebar */
+    .sidebar__device {
+      margin: 0 12px 4px;
+      background: var(--navy);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .sidebar__device-icon {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,.1);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .sidebar__device-icon svg {
+      width: 22px; height: 22px;
+      stroke: #fff;
+      fill: none;
+    }
+    .sidebar__device-label {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,.5);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 2px;
+    }
+    .sidebar__device-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .sidebar__device-status {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 4px;
+    }
+    .sidebar__device-dot {
+      width: 7px; height: 7px;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .sidebar__device-connected {
+      font-size: 0.76rem;
+      color: #4ade80;
+      font-weight: 600;
+    }
+
+    /* ─────────────────────────────────────────
+       MAIN CONTENT
+    ───────────────────────────────────────── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      max-width: 100%;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .page-header__titles { }
+    .page-header__title {
+      font-family: var(--font-display);
+      font-size: 1.85rem;
+      color: var(--text);
+      line-height: 1.15;
+    }
+    .page-header__subtitle {
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .page-header__actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    .page-header__update-info {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .right-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ─────────────────────────────────────────
+       MAP CARD
+    ───────────────────────────────────────── */
+    .map-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .map-container {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      background: #e8e0d6;
+      overflow: hidden;
+    }
+
+    /* SVG map background grid lines */
+    .map-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+    }
+
+    .map-controls {
+      position: absolute;
+      top: 14px; left: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 10;
+    }
+    .map-controls button {
+      width: 32px; height: 32px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--text);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow);
+      transition: background var(--transition);
+    }
+    .map-controls button:hover { background: var(--bg); }
+
+    .map-locate-btn {
+      position: absolute;
+      top: 14px; right: 14px;
+      width: 36px; height: 36px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow);
+      z-index: 10;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .map-locate-btn:hover { background: var(--bg); }
+    .map-locate-btn svg { width: 18px; height: 18px; stroke: var(--navy); fill: none; }
+
+    /* Map tooltips */
+    .map-tooltip {
+      position: absolute;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      box-shadow: var(--shadow-lg);
+      font-size: 0.8rem;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .map-tooltip__label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+    .map-tooltip__value {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .map-tooltip__time {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .map-tooltip--origin {
+      top: 26%; left: 10%;
+    }
+    .map-tooltip--current {
+      top: 22%; right: 10%;
+    }
+
+    /* Map footer */
+    .map-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .map-legend {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .map-legend__item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .legend-line {
+      width: 28px; height: 3px;
+      border-radius: 2px;
+    }
+    .legend-line--green { background: var(--green); }
+    .legend-line--gray {
+      background: repeating-linear-gradient(90deg, #bbb 0, #bbb 5px, transparent 5px, transparent 9px);
+      height: 2px;
+    }
+    .legend-line--orange {
+      background: repeating-linear-gradient(90deg, var(--amber) 0, var(--amber) 6px, transparent 6px, transparent 10px);
+    }
+
+    .map-precision {
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
+
+    /* Trip details strip */
+    .trip-timeline {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      box-shadow: var(--shadow);
+    }
+    .trip-timeline__title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .timeline-track {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .timeline-track::before {
+      content: '';
+      position: absolute;
+      top: 18px;
+      left: 20px; right: 20px;
+      height: 3px;
+      background: var(--border);
+      z-index: 0;
+    }
+    .timeline-track__segment {
+      position: absolute;
+      top: 18px;
+      left: 20px;
+      height: 3px;
+      width: 50%;
+      background: var(--green);
+      z-index: 1;
+    }
+    .timeline-track__segment-deviation {
+      position: absolute;
+      top: 18px;
+      left: 70%;
+      height: 3px;
+      width: 13%;
+      background: repeating-linear-gradient(90deg, var(--amber) 0, var(--amber) 5px, transparent 5px, transparent 9px);
+      z-index: 2;
+    }
+    .timeline-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      z-index: 3;
+      flex: 1;
+    }
+    .timeline-step__icon {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid var(--border);
+      background: var(--white);
+    }
+    .timeline-step__icon svg {
+      width: 18px; height: 18px;
+      stroke-width: 1.8;
+      fill: none;
+    }
+    .timeline-step__icon--origin { border-color: var(--green); background: var(--green-dim); }
+    .timeline-step__icon--origin svg { stroke: var(--green); }
+    .timeline-step__icon--walking { border-color: var(--green); background: var(--green-dim); }
+    .timeline-step__icon--walking svg { stroke: var(--green); }
+    .timeline-step__icon--deviation { border-color: var(--amber); background: var(--amber-dim); }
+    .timeline-step__icon--deviation svg { stroke: var(--amber); }
+    .timeline-step__icon--location { border-color: var(--coral); background: var(--coral-dim); }
+    .timeline-step__icon--location svg { stroke: var(--coral); }
+    .timeline-step__label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+      text-align: center;
+      line-height: 1.3;
+    }
+    .timeline-step__sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: -6px;
+    }
+
+    /* ─────────────────────────────────────────
+       INFO PANEL
+    ───────────────────────────────────────── */
+    .info-panel {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .info-panel__header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .info-panel__header-icon {
+      width: 30px; height: 30px;
+      background: var(--coral-dim);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .info-panel__header-icon svg {
+      width: 16px; height: 16px;
+      stroke: var(--coral);
+      fill: none;
+    }
+    .info-panel__header h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .info-item {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .info-item:last-child { border-bottom: none; }
+    .info-item__icon {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .info-item__icon svg {
+      width: 17px; height: 17px;
+      fill: none;
+      stroke-width: 1.8;
+    }
+    .info-item__icon--green { background: var(--green-dim); }
+    .info-item__icon--green svg { stroke: var(--green); }
+    .info-item__icon--amber { background: var(--amber-dim); }
+    .info-item__icon--amber svg { stroke: var(--amber); }
+    .info-item__icon--coral { background: var(--coral-dim); }
+    .info-item__icon--coral svg { stroke: var(--coral); }
+    .info-item__icon--blue { background: var(--blue-dim); }
+    .info-item__icon--blue svg { stroke: var(--blue); }
+    .info-item__icon--navy { background: rgba(30,48,72,.09); }
+    .info-item__icon--navy svg { stroke: var(--navy); }
+
+    .info-item__body { flex: 1; min-width: 0; }
+    .info-item__label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 3px;
+    }
+    .info-item__value {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .info-item__sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .info-item__tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-top: 3px;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .info-item__tag--red { background: rgba(196,113,90,.14); color: var(--coral); }
+    .info-item__tag--green { background: var(--green-dim); color: var(--green); }
+
+    /* ─────────────────────────────────────────
+       ROUTES PANEL
+    ───────────────────────────────────────── */
+    .routes-panel {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .routes-panel__header {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .route-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 20px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .route-item:last-of-type { border-bottom: none; }
+    .route-item:hover { background: var(--bg); }
+    .route-item--active { background: #fff8f6; }
+
+    .route-item__num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .route-item--active .route-item__num {
+      background: var(--coral);
+      color: #fff;
+    }
+    .route-item:not(.route-item--active) .route-item__num {
+      background: var(--bg);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .route-item__info { flex: 1; min-width: 0; }
+    .route-item__name {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .route-item__meta {
+      display: flex;
+      gap: 10px;
+      margin-top: 2px;
+    }
+    .route-item__meta span {
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+    .route-item__check svg {
+      width: 16px; height: 16px;
+      stroke: var(--coral);
+      fill: none;
+      stroke-width: 2.5;
+    }
+
+    .routes-panel__action {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ─────────────────────────────────────────
+       DEVICE STATUS
+    ───────────────────────────────────────── */
+    /* Handled inside sidebar — see .sidebar__device */
+
+    /* ─────────────────────────────────────────
+       BUTTONS
+    ───────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all var(--transition);
+      cursor: pointer;
+      border: none;
+    }
+    .btn svg {
+      width: 15px; height: 15px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .btn--outline {
+      background: var(--white);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn--outline:hover { background: var(--bg); border-color: var(--coral); color: var(--coral); }
+
+    .btn--coral {
+      background: var(--coral);
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(196, 113, 90, .3);
+    }
+    .btn--coral:hover {
+      background: #b5624c;
+      box-shadow: 0 4px 14px rgba(196, 113, 90, .4);
+    }
+
+    .btn--ghost {
+      background: transparent;
+      color: var(--navy);
+      border: 1px solid var(--border);
+      width: 100%;
+      justify-content: center;
+    }
+    .btn--ghost:hover { background: var(--bg); color: var(--coral); border-color: var(--coral); }
+
+    .btn--gmaps {
+      background: transparent;
+      color: var(--coral);
+      border: 1px solid var(--coral);
+      font-size: 0.78rem;
+      padding: 7px 14px;
+    }
+    .btn--gmaps:hover { background: var(--coral); color: #fff; }
+    .btn--gmaps svg { stroke: currentColor; }
+
+    /* ─────────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────────── */
+    @media (max-width: 1100px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+      .right-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --sidebar-w: 0px;
+      }
+      .sidebar {
+        display: none;
+      }
+      .main {
+        margin-left: 0;
+        padding: 20px 16px;
+      }
+      .right-column {
+        grid-template-columns: 1fr;
+      }
+      .navbar__brand-name { font-size: 1rem; }
+      .timeline-step__sub { display: none; }
+      .map-container { height: 260px; }
+    }
+
+    @media (max-width: 480px) {
+      .page-header { flex-direction: column; gap: 10px; }
+      .page-header__actions { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAVBAR ─── -->
+  <nav class="navbar">
+    <!-- Brand -->
+    <div class="navbar__brand">
+      <div class="navbar__logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5z"/><path d="M9 2v4M15 2v4M12 11v6M9 14h6"/></svg>
+      </div>
+      <span class="navbar__brand-name">SenseBagPack</span>
+    </div>
+
+    <!-- Actions -->
+    <div class="navbar__actions">
+      <!-- Notifications -->
+      <button class="navbar__notif" aria-label="Notificaciones">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="navbar__notif-badge">3</span>
+      </button>
+
+      <!-- User menu -->
+      <div class="navbar__dropdown-wrap">
+        <div class="navbar__user" tabindex="0" role="button" aria-haspopup="true">
+          <div class="navbar__avatar">U</div>
+          <span class="navbar__username">Usuario</span>
+          <svg class="navbar__chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="navbar__dropdown" role="menu">
+          <ul>
+            <li>
+              <a href="#">
+                <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Mi perfil
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M12 2v2M4.93 4.93l1.41 1.41M2 12h2M4.93 19.07l1.41-1.41M12 20v2M19.07 19.07l-1.41-1.41M20 12h2"/></svg>
+                Configuración
+              </a>
+            </li>
+            <div class="dropdown-divider"></div>
+            <li>
+              <a href="#">
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Cerrar sesión
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─── LAYOUT ─── -->
+  <div class="layout">
+
+    <!-- ─── SIDEBAR ─── -->
+    <aside class="sidebar" role="navigation" aria-label="Menú principal">
+      <nav class="sidebar__nav">
+        <ul>
+          <li>
+            <a class="sidebar__item" href="#">
+              <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a class="sidebar__item sidebar__item--active" href="#" aria-current="page">
+              <svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+              Mapa
+            </a>
+          </li>
+          <li>
+            <a class="sidebar__item" href="#">
+              <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              Estado
+            </a>
+          </li>
+          <li>
+            <a class="sidebar__item" href="#">
+              <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              Alarmas
+            </a>
+          </li>
+          <li>
+            <a class="sidebar__item" href="#">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Historial
+            </a>
+          </li>
+
+          <div class="sidebar__divider"></div>
+
+          <li>
+            <a class="sidebar__item" href="#">
+              <svg viewBox="0 0 24 24"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+              Zonas seguras
+            </a>
+          </li>
+          <li>
+            <a class="sidebar__item" href="#">
+              <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Contactos
+            </a>
+          </li>
+          <li>
+            <a class="sidebar__item" href="#">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M12 2v2M4.93 4.93l1.41 1.41M2 12h2M4.93 19.07l1.41-1.41M12 20v2M19.07 19.07l-1.41-1.41M20 12h2"/></svg>
+              Configuración
+            </a>
+          </li>
+
+          <div class="sidebar__divider"></div>
+
+          <li>
+            <a class="sidebar__item" href="#">
+              <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Cerrar sesión
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Device card -->
+      <div class="sidebar__device">
+        <div class="sidebar__device-icon">
+          <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        </div>
+        <div>
+          <div class="sidebar__device-label">Dispositivo</div>
+          <div class="sidebar__device-name">SBP-4G-8921</div>
+          <div class="sidebar__device-status">
+            <div class="sidebar__device-dot"></div>
+            <span class="sidebar__device-connected">Conectado</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ─── MAIN ─── -->
+    <main class="main">
+
+      <!-- Page header -->
+      <div class="page-header">
+        <div class="page-header__titles">
+          <h1 class="page-header__title">Mapa en tiempo real</h1>
+          <p class="page-header__subtitle">Seguimiento y navegación del dispositivo</p>
+        </div>
+        <div class="page-header__actions">
+          <button class="btn btn--outline">
+            <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Actualizar ubicación
+          </button>
+          <span class="page-header__update-info">Última actualización: hace 10 seg</span>
+        </div>
+      </div>
+
+      <!-- Content grid -->
+      <div class="content-grid">
+
+        <!-- LEFT COLUMN -->
+        <div class="left-column">
+
+          <!-- Map card -->
+          <div class="map-card">
+            <div class="map-container">
+
+              <!-- SVG map -->
+              <svg class="map-bg" viewBox="0 0 780 380" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+                <!-- Background fill -->
+                <rect width="780" height="380" fill="#ede8df"/>
+
+                <!-- Street grid — horizontal -->
+                <line x1="0"   y1="60"  x2="780" y2="60"  stroke="#d8d0c4" stroke-width="12"/>
+                <line x1="0"   y1="130" x2="780" y2="130" stroke="#d8d0c4" stroke-width="8"/>
+                <line x1="0"   y1="200" x2="780" y2="200" stroke="#d8d0c4" stroke-width="18"/>
+                <line x1="0"   y1="265" x2="780" y2="265" stroke="#d8d0c4" stroke-width="8"/>
+                <line x1="0"   y1="330" x2="780" y2="330" stroke="#d8d0c4" stroke-width="14"/>
+
+                <!-- Street grid — vertical -->
+                <line x1="80"  y1="0"   x2="80"  y2="380" stroke="#d8d0c4" stroke-width="8"/>
+                <line x1="180" y1="0"   x2="180" y2="380" stroke="#d8d0c4" stroke-width="14"/>
+                <line x1="320" y1="0"   x2="320" y2="380" stroke="#d8d0c4" stroke-width="8"/>
+                <line x1="450" y1="0"   x2="450" y2="380" stroke="#d8d0c4" stroke-width="18"/>
+                <line x1="590" y1="0"   x2="590" y2="380" stroke="#d8d0c4" stroke-width="8"/>
+                <line x1="700" y1="0"   x2="700" y2="380" stroke="#d8d0c4" stroke-width="14"/>
+
+                <!-- Diagonal avenue -->
+                <line x1="0" y1="380" x2="350" y2="0" stroke="#d8d0c4" stroke-width="10"/>
+
+                <!-- Park block -->
+                <rect x="340" y="145" width="160" height="90" rx="8" fill="#c8dbc0" opacity="0.7"/>
+                <text x="420" y="198" font-size="11" fill="#6a9c60" font-family="Manrope, sans-serif" font-weight="600" text-anchor="middle">Parque</text>
+                <text x="420" y="212" font-size="10" fill="#6a9c60" font-family="Manrope, sans-serif" text-anchor="middle">Rivadavia</text>
+
+                <!-- Block fills -->
+                <rect x="82"  y="62"  width="96"  height="66" rx="5" fill="#e5dfd4" opacity="0.6"/>
+                <rect x="82"  y="132" width="96"  height="66" rx="5" fill="#e5dfd4" opacity="0.6"/>
+                <rect x="182" y="62"  width="136" height="66" rx="5" fill="#e5dfd4" opacity="0.6"/>
+                <rect x="182" y="132" width="136" height="66" rx="5" fill="#e5dfd4" opacity="0.6"/>
+                <rect x="322" y="62"  width="126" height="80" rx="5" fill="#e5dfd4" opacity="0.6"/>
+                <rect x="452" y="62"  width="136" height="66" rx="5" fill="#e5dfd4" opacity="0.6"/>
+                <rect x="452" y="132" width="136" height="66" rx="5" fill="#e5dfd4" opacity="0.6"/>
+                <rect x="452" y="240" width="136" height="80" rx="5" fill="#e5dfd4" opacity="0.6"/>
+                <rect x="592" y="62"  width="106" height="130" rx="5" fill="#e5dfd4" opacity="0.6"/>
+                <rect x="82"  y="202" width="264" height="61" rx="5" fill="#e5dfd4" opacity="0.6"/>
+                <rect x="82"  y="267" width="264" height="61" rx="5" fill="#e5dfd4" opacity="0.6"/>
+
+                <!-- Street labels -->
+                <text x="225" y="57" font-size="9" fill="#a09288" font-family="Manrope,sans-serif" font-weight="600" text-anchor="middle">Av. La Plata</text>
+                <text x="225" y="127" font-size="9" fill="#a09288" font-family="Manrope,sans-serif" font-weight="600" text-anchor="middle">Av. Juan B. Justo</text>
+                <text x="550" y="197" font-size="9" fill="#a09288" font-family="Manrope,sans-serif" font-weight="600" text-anchor="middle">Av. Corrientes</text>
+                <text x="550" y="261" font-size="9" fill="#a09288" font-family="Manrope,sans-serif" font-weight="600" text-anchor="middle">Av. Eva Pedrito</text>
+                <text x="550" y="327" font-size="9" fill="#a09288" font-family="Manrope,sans-serif" font-weight="600" text-anchor="middle">Av. Eva Perón</text>
+                <text x="178" y="110" font-size="9" fill="#a09288" font-family="Manrope,sans-serif" font-weight="600" transform="rotate(-90,178,110)">Av. Díaz Vélez</text>
+
+                <!-- ── Dashed expected route (gray) ── -->
+                <path d="M 100 210 Q 250 180 400 200 Q 520 215 590 200"
+                      stroke="#b0a498" stroke-width="2.5" fill="none"
+                      stroke-dasharray="6 5" stroke-linecap="round"/>
+
+                <!-- ── Green route (taken) ── -->
+                <path d="M 100 210 Q 200 195 320 200 Q 390 203 450 200"
+                      stroke="#3a9e6f" stroke-width="4" fill="none"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Green dots along route -->
+                <circle cx="100" cy="210" r="4" fill="#3a9e6f"/>
+                <circle cx="150" cy="205" r="3.5" fill="#3a9e6f"/>
+                <circle cx="200" cy="200" r="3.5" fill="#3a9e6f"/>
+                <circle cx="250" cy="199" r="3.5" fill="#3a9e6f"/>
+                <circle cx="300" cy="200" r="3.5" fill="#3a9e6f"/>
+                <circle cx="350" cy="200" r="3.5" fill="#3a9e6f"/>
+                <circle cx="400" cy="200" r="3.5" fill="#3a9e6f"/>
+                <circle cx="450" cy="200" r="3" fill="#3a9e6f" opacity="0.8"/>
+
+                <!-- ── Orange deviation ── -->
+                <path d="M 450 200 Q 510 230 560 210"
+                      stroke="#e8920a" stroke-width="3.5" fill="none"
+                      stroke-dasharray="8 5" stroke-linecap="round"/>
+                <circle cx="490" cy="218" r="3" fill="#e8920a"/>
+                <circle cx="530" cy="215" r="3" fill="#e8920a"/>
+
+                <!-- Current location pulse -->
+                <circle cx="560" cy="210" r="38" fill="rgba(196,113,90,0.12)"/>
+                <circle cx="560" cy="210" r="22" fill="rgba(196,113,90,0.18)"/>
+
+                <!-- Current position marker -->
+                <g transform="translate(545, 188)">
+                  <path d="M15 0 C6.72 0 0 6.72 0 15 C0 26.25 15 38 15 38 C15 38 30 26.25 30 15 C30 6.72 23.28 0 15 0Z"
+                        fill="#c4715a" stroke="#fff" stroke-width="2"/>
+                  <circle cx="15" cy="15" r="6" fill="#fff"/>
+                </g>
+
+                <!-- Origin marker (home) -->
+                <g transform="translate(84, 193)">
+                  <circle cx="13" cy="13" r="15" fill="#3a9e6f" stroke="#fff" stroke-width="2.5"/>
+                  <path d="M13 5 L5 11 L5 21 L21 21 L21 11 Z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/>
+                  <rect x="9" y="15" width="8" height="6" rx="1" fill="#fff"/>
+                </g>
+              </svg>
+
+              <!-- Map controls -->
+              <div class="map-controls">
+                <button aria-label="Acercar">+</button>
+                <button aria-label="Alejar">−</button>
+              </div>
+
+              <!-- Locate button -->
+              <button class="map-locate-btn" aria-label="Mi ubicación">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+              </button>
+
+              <!-- Origin tooltip -->
+              <div class="map-tooltip map-tooltip--origin">
+                <div class="map-tooltip__label">Punto de salida</div>
+                <div class="map-tooltip__value">Casa</div>
+                <div class="map-tooltip__time">14:10</div>
+              </div>
+
+              <!-- Current position tooltip -->
+              <div class="map-tooltip map-tooltip--current">
+                <div class="map-tooltip__label">Ubicación actual</div>
+                <div class="map-tooltip__value">Av. Corrientes 1234</div>
+                <div class="map-tooltip__time">14:25</div>
+              </div>
+            </div>
+
+            <!-- Map footer -->
+            <div class="map-footer">
+              <div class="map-legend">
+                <div class="map-legend__item">
+                  <div class="legend-line legend-line--green"></div>
+                  Ruta tomada
+                </div>
+                <div class="map-legend__item">
+                  <div class="legend-line legend-line--gray"></div>
+                  Ruta esperada
+                </div>
+                <div class="map-legend__item">
+                  <div class="legend-line legend-line--orange"></div>
+                  Desvío
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:14px;">
+                <span class="map-precision">Precisión: ± 12 metros</span>
+                <button class="btn btn--gmaps">
+                  <svg viewBox="0 0 24 24" style="width:13px;height:13px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  Ver en Google Maps
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trip timeline -->
+          <div class="trip-timeline">
+            <div class="trip-timeline__title">Detalles del trayecto</div>
+            <div class="timeline-track">
+              <div class="timeline-track__segment"></div>
+              <div class="timeline-track__segment-deviation"></div>
+
+              <!-- Step 1: Origin -->
+              <div class="timeline-step">
+                <div class="timeline-step__icon timeline-step__icon--origin">
+                  <svg viewBox="0 0 24 24" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </div>
+                <div class="timeline-step__label">Punto de salida<br>Casa</div>
+                <div class="timeline-step__sub">14:10</div>
+              </div>
+
+              <!-- Step 2: In progress -->
+              <div class="timeline-step">
+                <div class="timeline-step__icon timeline-step__icon--walking">
+                  <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="5" r="2"/><path d="M12 8l-2 4 3 1-1 6"/><path d="M10 12l-2 3"/><path d="M14 13l2 3"/></svg>
+                </div>
+                <div class="timeline-step__label">Ruta en progreso<br>En movimiento</div>
+                <div class="timeline-step__sub">&nbsp;</div>
+              </div>
+
+              <!-- Step 3: Deviation -->
+              <div class="timeline-step">
+                <div class="timeline-step__icon timeline-step__icon--deviation">
+                  <svg viewBox="0 0 24 24" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                </div>
+                <div class="timeline-step__label">Desvío detectado<br>+350 m del recorrido</div>
+                <div class="timeline-step__sub">14:20</div>
+              </div>
+
+              <!-- Step 4: Current -->
+              <div class="timeline-step">
+                <div class="timeline-step__icon timeline-step__icon--location">
+                  <svg viewBox="0 0 24 24" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div class="timeline-step__label">Ubicación actual<br>Av. Corrientes 1234</div>
+                <div class="timeline-step__sub">14:25</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="right-column">
+
+          <!-- Info panel -->
+          <div class="info-panel">
+            <div class="info-panel__header">
+              <div class="info-panel__header-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <h3>Información del trayecto</h3>
+            </div>
+
+            <!-- Distance -->
+            <div class="info-item">
+              <div class="info-item__icon info-item__icon--green">
+                <svg viewBox="0 0 24 24"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div class="info-item__body">
+                <div class="info-item__label">Distancia al punto de salida</div>
+                <div class="info-item__value">1,2 km</div>
+                <div class="info-item__sub">Restante</div>
+              </div>
+            </div>
+
+            <!-- ETA -->
+            <div class="info-item">
+              <div class="info-item__icon info-item__icon--amber">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="info-item__body">
+                <div class="info-item__label">Tiempo estimado de llegada</div>
+                <div class="info-item__value">8 min</div>
+                <div class="info-item__sub">Restante</div>
+              </div>
+            </div>
+
+            <!-- Deviations -->
+            <div class="info-item">
+              <div class="info-item__icon info-item__icon--coral">
+                <svg viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+              </div>
+              <div class="info-item__body">
+                <div class="info-item__label">Desvíos detectados</div>
+                <div class="info-item__value">Sí</div>
+                <div class="info-item__tag info-item__tag--red">1 desvío (350 m)</div>
+              </div>
+            </div>
+
+            <!-- Chosen route -->
+            <div class="info-item">
+              <div class="info-item__icon info-item__icon--blue">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <div class="info-item__body">
+                <div class="info-item__label">Ruta predeterminada elegida</div>
+                <div class="info-item__value" style="font-size:.95rem;">Ruta 1 - Más rápida</div>
+                <div class="info-item__sub">Definida por el dispositivo</div>
+              </div>
+            </div>
+
+            <!-- Last event -->
+            <div class="info-item">
+              <div class="info-item__icon info-item__icon--navy">
+                <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </div>
+              <div class="info-item__body">
+                <div class="info-item__label">Último botón presionado en el dispositivo</div>
+                <div class="info-item__value" style="font-size:.95rem;">Ruta 1 - Más rápida</div>
+                <div class="info-item__sub">Hoy, 14:25</div>
+                <div class="info-item__sub">El usuario eligió esta ruta en su dispositivo</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Routes panel -->
+          <div class="routes-panel">
+            <div class="routes-panel__header">Rutas disponibles</div>
+
+            <!-- Route 1 — selected -->
+            <div class="route-item route-item--active">
+              <div class="route-item__num">1</div>
+              <div class="route-item__info">
+                <div class="route-item__name">Ruta 1 - Más rápida</div>
+                <div class="route-item__meta">
+                  <span>8 min</span>
+                  <span>1,2 km</span>
+                </div>
+              </div>
+              <div class="route-item__check">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+            </div>
+
+            <!-- Route 2 -->
+            <div class="route-item">
+              <div class="route-item__num">2</div>
+              <div class="route-item__info">
+                <div class="route-item__name">Ruta 2 - Más corta</div>
+                <div class="route-item__meta">
+                  <span>10 min</span>
+                  <span>1,0 km</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Route 3 -->
+            <div class="route-item">
+              <div class="route-item__num">3</div>
+              <div class="route-item__info">
+                <div class="route-item__name">Ruta 3 - Menos tráfico</div>
+                <div class="route-item__meta">
+                  <span>12 min</span>
+                  <span>1,4 km</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="routes-panel__action">
+              <button class="btn btn--ghost">
+                <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Cambiar ruta en dispositivo
+              </button>
+            </div>
+          </div>
+
+        </div>
+        <!-- /right-column -->
+
+      </div>
+      <!-- /content-grid -->
+
+    </main>
+    <!-- /main -->
+
+  </div>
+  <!-- /layout -->
+
+</body>
+</html>
+```
